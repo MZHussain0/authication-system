@@ -17,7 +17,7 @@
   @apply focus:outline-none;
 }
 
-.btn {
+.btn[type="submit"] {
   @apply border bg-indigo-500 w-3/4 py-4 rounded-lg text-gray-50 text-xl shadow-sm text-center;
 }
 
