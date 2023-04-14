@@ -4,6 +4,7 @@ import morgan from "morgan";
 import mongoose from "mongoose";
 import connect from "./database/connection.js";
 import dotenv from "dotenv";
+import router from "./routes/route.js";
 
 dotenv.config();
 connect();
@@ -20,6 +21,9 @@ app.disable("x-powered-by");
 app.get("/", (req, res) => {
   res.status(201).json("Home get request");
 });
+
+// API ROUTES //
+app.use("/api", router);
 
 // start server only when we have valid connection //
 mongoose.connection.once("open", () => {
