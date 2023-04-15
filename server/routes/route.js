@@ -3,6 +3,7 @@ const router = Router();
 
 // Import all controllers //
 import * as controller from "../controllers/appController.js";
+import { validateToken } from "../middleware/auth.js";
 
 // POST METHODS //
 router.route("/register").post(controller.register);
@@ -17,6 +18,6 @@ router.route("/verifyOTP").get(controller.verifyOTP);
 router.route("/createResetSession").get(controller.createResetSession);
 
 // PUT METHODS //
-router.route("/updateUser").put(controller.updateUser);
+router.route("/updateUser").put(validateToken, controller.updateUser);
 router.route("/resetpassword").put(controller.resetPassword);
 export default router;

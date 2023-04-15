@@ -124,12 +124,12 @@ body: {
 }
 */
 export const updateUser = asyncHandler(async (req, res) => {
-  const id = req.query.id;
+  const { id } = req.user;
 
   if (id) {
     const body = req.body;
     const updatedUser = await User.findByIdAndUpdate(id, body, { new: true });
-    res.status(200).send({ user: updateUser, msg: "Updated Successfully!" });
+    res.status(200).json({ user: updatedUser, msg: "Updated Successfully!" });
   }
 });
 
