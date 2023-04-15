@@ -100,10 +100,18 @@ export const login = asyncHandler(async (req, res) => {
   }
 });
 
-/** GET: http://localhost:8080/api/user/example123 */
-export async function getUser(req, res) {
-  res.json("getUser route");
-}
+/** GET: http://localhost:8000/api/user/example123 */
+export const getUser = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found!");
+  }
+  const { password, ...rest } = user._doc;
+  res.status(200).send(rest);
+});
 
 /** PUT: http://localhost:8000/api/updateuser 
  * @param: {
