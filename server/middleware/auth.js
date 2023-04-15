@@ -22,3 +22,11 @@ export const validateToken = asyncHandler(async (req, res, next) => {
     }
   }
 });
+
+export const localVariable = (req, res, next) => {
+  req.app.locals = {
+    OTP: null,
+    resetSession: false,
+  };
+  next();
+};

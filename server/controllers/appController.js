@@ -2,6 +2,7 @@
 import bcrypt from "bcrypt";
 import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
+import otpGenerator from "otp-generator";
 
 /** Middleware to verify user */
 export const verifyUser = asyncHandler(async (req, res, next) => {
@@ -134,20 +135,37 @@ export const updateUser = asyncHandler(async (req, res) => {
 });
 
 /** GET: http://localhost:8080/api/generateOTP */
-export async function generateOTP(req, res) {
-  res.json("generateOTP route");
-}
+export const generateOTP = asyncHandler(async (req, res) => {
+  req.app.locals.OTP = await otpGenerator.generate(6, {
+    upperCaseAlphabets: false,
+    lowerCaseAlphabets: false,
+    specialChars: false,
+  });
 
+  res.status(201).send({ code: req.app.locals.OTP });
+});
 /** GET: http://localhost:8080/api/verifyOTP */
-export async function verifyOTP(req, res) {
-  res.json("verifyOTP route");
-}
+export const verifyOTP = asyncHandler(async (req, res) => {
+  const { code } = req.query;
+
+  if (parseInt(code) === parseInt(req.app.locals.OTP)) {
+    req.app.locals.OTP = null;
+    req.app.locals.resetSession = true;
+    return res.status(200).send({ msg: "OTP verified" });
+  } else {
+    return res.status(400).send({ error: "Invalid OTP" });
+  }
+});
 
 // successfully redirect user when OTP is valid
 /** GET: http://localhost:8080/api/createResetSession */
-export async function createResetSession(req, res) {
-  res.json("createResetSession route");
-}
+export const createResetSession = asyncHandler(async (req, res) => {
+  if (req.app.locals.resetSession) {
+    req.app.locals.resetSession = false;
+    return res.status(200).send({ msg: "Access Granted!" });
+  }
+  return res.status(400).send({ error: "Session expired!" });
+});
 
 // update the password when we have valid session
 /** PUT: http://localhost:8080/api/resetPassword */
