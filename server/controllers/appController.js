@@ -123,9 +123,15 @@ body: {
     profile : ''
 }
 */
-export async function updateUser(req, res) {
-  res.json("updateUser route");
-}
+export const updateUser = asyncHandler(async (req, res) => {
+  const id = req.query.id;
+
+  if (id) {
+    const body = req.body;
+    const updatedUser = await User.findByIdAndUpdate(id, body, { new: true });
+    res.status(200).send({ user: updateUser, msg: "Updated Successfully!" });
+  }
+});
 
 /** GET: http://localhost:8080/api/generateOTP */
 export async function generateOTP(req, res) {
