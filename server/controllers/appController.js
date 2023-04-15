@@ -1,4 +1,8 @@
-﻿/** POST: http://localhost:8000/api/register 
+﻿import User from "../models/User.model.js";
+import bcrypt from "bcrypt";
+import asyncHandler from "express-async-handler";
+
+/** POST: http://localhost:8000/api/register 
  * @param : {
   "username" : "example123",
   "password" : "admin123",
@@ -10,9 +14,40 @@
   "profile": ""
 }
 */
-export async function register(req, res) {
-  res.json("register route");
-}
+
+export const register = asyncHandler(async (req, res) => {
+  const { username, password, email, profile } = req.body;
+
+  // Check whether username exists
+  const userExists = await User.findOne({ username });
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
+  // Check whether email exists
+  const emailExists = await User.findOne({ email });
+
+  if (emailExists) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await User.create({
+    username,
+    password: hashedPassword,
+    email,
+    profile: profile || "",
+  });
+
+  if (user) {
+    res.status(201).json({ _id: user.id, email: user.email });
+  } else {
+    res.status(400);
+    throw new Error("User not created");
+  }
+});
 
 /** POST: http://localhost:8000/api/login 
  * @param: {
