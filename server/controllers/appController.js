@@ -55,7 +55,7 @@ export const register = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    res.status(201).json({ _id: user.id, email: user.email });
+    res.status(201).send({ msg: "User created successfully" });
   } else {
     res.status(400);
     throw new Error("User not created");
